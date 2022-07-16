@@ -3,15 +3,38 @@ import { galleryItems } from "./gallery-items.js";
 const gallery = document.querySelector(".gallery");
 
 const makeImagesItems = ({ preview, description, original }) =>
-  `<li class = "gallery__item">
-  <img class = "gallery__image"  data-set = "${original}" src = "${preview}" alt = "${description}" ></li>`;
+  `<div class="gallery__item"><a class="gallery__link" href="${original}">
+    <img
+      class="gallery__image"
+      src="${preview}"
+      data-source="${original}"
+      alt="${description}"
+    />
+  </a>
+</div>`;
 const imagesItems = galleryItems.map(makeImagesItems).join("");
 gallery.insertAdjacentHTML("afterbegin", imagesItems);
 
 gallery.addEventListener("click", clickItemGallery);
 function clickItemGallery(event) {
+  event.preventDefault();
   if (!event.target.classList.contains("gallery__image")) {
-    return;
+    return console.log("missed");
   }
-  console.log(event.target);
+  const modal = basicLightbox.create(
+    `<img width="800" height="600"
+        src="${event.target.dataset.source}">`
+  );
+  modal.show();
+
+  if (modal.visible()) {
+    window.addEventListener("keydown", onPressKeyESC);
+  }
+
+  function onPressKeyESC(event) {
+    if (event.code === "Escape") {
+      modal.close();
+      window.removeEventListener("keydown", onPressKeyESC);
+    }
+  }
 }
