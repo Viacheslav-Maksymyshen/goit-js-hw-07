@@ -23,18 +23,21 @@ function clickItemGallery(event) {
   }
   const modal = basicLightbox.create(
     `<img width="800" height="600"
-        src="${event.target.dataset.source}">`
+        src="${event.target.dataset.source}">`,
+    {
+      onShow: () => {
+        window.addEventListener("keydown", onPressKeyESC);
+      },
+      onClose: () => {
+        window.removeEventListener("keydown", onPressKeyESC);
+      },
+    }
   );
   modal.show();
-
-  if (modal.visible()) {
-    window.addEventListener("keydown", onPressKeyESC);
-  }
 
   function onPressKeyESC(event) {
     if (event.code === "Escape") {
       modal.close();
-      window.removeEventListener("keydown", onPressKeyESC);
     }
   }
 }
